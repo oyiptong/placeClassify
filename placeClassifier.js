@@ -1,4 +1,5 @@
 var gNotWordPattern = /[^a-z0-9 ]+/g;
+var gMinimumMatchTokens = 3;
 
 function PlaceTokenizer(aUrlStopwordSet) {
   this._urlStopwordSet = aUrlStopwordSet;
@@ -51,7 +52,7 @@ NaiveBayesClassifier.prototype.classify = function(aTokens) {
     }
   }, this); 
 
-  if (tokenMatchCount > 3) {
+  if (tokenMatchCount > gMinimumMatchTokens) {
     max_index = posteriors.indexOf(Math.max.apply(Math, posteriors));
     return this._classes[max_index];
   }

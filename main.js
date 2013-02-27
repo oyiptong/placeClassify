@@ -4,10 +4,10 @@ var testDataFilename = process.argv[3];
 
 var model = require(modelFilename);
 var urlStopwordSet = require('./urlStopwordSet');
-var nbayes = require('./nbayes');
+var placeClassifier = require('./placeClassifier');
 
-var gTokenizer = new nbayes.PlaceTokenizer(urlStopwordSet);
-var gClassifier = new nbayes.NaiveBayesClassifier(model);
+var gTokenizer = new placeClassifier.PlaceTokenizer(urlStopwordSet);
+var gClassifier = new placeClassifier.NaiveBayesClassifier(model);
 
 var fs = require('fs');
 var lazy = require('lazy');
@@ -42,7 +42,7 @@ new lazy(fs.createReadStream(testDataFilename)).lines.forEach(function(line){
   if (gDocumentCount%100000 == 0) {
     var now = new Date().getTime();
     console.log("");
-    console.log("Sucess rate: " + (gSuccessCount/gDocumentCount*100).toFixed(2) + "%");
+    console.log("Success rate: " + (gSuccessCount/gDocumentCount*100).toFixed(2) + "%");
     console.log("Error rate: " + (gErrorCount/gDocumentCount*100).toFixed(2) + "%");
     console.log("Uncategorized rate: " + (gUnCategorized/gDocumentCount*100).toFixed(2) + "%");
     console.log("----");
