@@ -1,16 +1,18 @@
 #!/usr/bin/env node
-var modelFilename = process.argv[2];
-var testDataFilename = process.argv[3];
+var fs = require('fs');
 
-var model = require(modelFilename);
+var lazy = require('lazy');
+var timeago = require('timeago');
+
 var urlStopwordSet = require('./urlStopwordSet');
 var placeClassifier = require('./placeClassifier');
 
+var modelFilename = process.argv[2];
+var testDataFilename = process.argv[3];
+var model = require(modelFilename);
+
 var gTokenizer = new placeClassifier.PlaceTokenizer(urlStopwordSet);
 var gClassifier = new placeClassifier.NaiveBayesClassifier(model);
-
-var fs = require('fs');
-var lazy = require('lazy');
 
 var gSuccessCount = 0;
 var gErrorCount = 0;
@@ -18,6 +20,8 @@ var gUnCategorized = 0;
 var gDocumentCount = 0;
 
 var start = new Date().getTime();
+
+timeago.settings.strings.suffixAgo = "";
 
 function printProgress() {
     var now = new Date().getTime();
@@ -32,7 +36,7 @@ function printProgress() {
 }
 
 new lazy(fs.createReadStream(testDataFilename))
-  .on('end', function() { printProgress(); })
+  .on('end', function() { printProgress(); console.log("time taken: " + timeago(new Date())) })
   .lines
   .forEach(function(line){
     gDocumentCount += 1;
