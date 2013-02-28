@@ -19,7 +19,8 @@ var gErrorCount = 0;
 var gUnCategorized = 0;
 var gDocumentCount = 0;
 
-var start = new Date().getTime();
+var startDate = new Date();
+var startTime = startDate.getTime();
 
 timeago.settings.strings.suffixAgo = "";
 
@@ -31,12 +32,12 @@ function printProgress() {
     console.log("Uncategorized rate: " + (gUnCategorized/gDocumentCount*100).toFixed(2) + "%");
     console.log("----");
     console.log("Document Count: " + gDocumentCount);
-    console.log("Rate: " + (gDocumentCount/(now-start)).toFixed(2) + " docs/sec");
+    console.log("Rate: " + (gDocumentCount/(now-startTime)).toFixed(2) + " docs/sec");
     console.log("");
 }
 
 new lazy(fs.createReadStream(testDataFilename))
-  .on('end', function() { printProgress(); console.log("time taken: " + timeago(new Date())) })
+  .on('end', function() { printProgress(); console.log("time taken: " + timeago(startDate)) })
   .lines
   .forEach(function(line){
     gDocumentCount += 1;
