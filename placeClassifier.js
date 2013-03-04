@@ -1,13 +1,13 @@
-var gNotWordPattern = /[^a-z0-9 ]+/g;
-var gMinimumMatchTokens = 3;
+const kNotWordPattern = /[^a-z0-9 ]+/g;
+const kMinimumMatchTokens = 3;
 
 function PlaceTokenizer(aUrlStopwordSet) {
   this._urlStopwordSet = aUrlStopwordSet;
 }
 
 PlaceTokenizer.prototype.tokenize = function(aUrl, aTitle) {
-  aUrl = aUrl.toLowerCase().replace(gNotWordPattern, " ");
-  aTitle = aTitle.toLowerCase().replace(gNotWordPattern, " ");
+  aUrl = aUrl.toLowerCase().replace(kNotWordPattern, " ");
+  aTitle = aTitle.toLowerCase().replace(kNotWordPattern, " ");
 
   tokens = [];
 
@@ -52,7 +52,7 @@ NaiveBayesClassifier.prototype.classify = function(aTokens) {
     }
   }, this); 
 
-  if (tokenMatchCount > gMinimumMatchTokens) {
+  if (tokenMatchCount > kMinimumMatchTokens) {
     max_index = posteriors.indexOf(Math.max.apply(Math, posteriors));
     return this._classes[max_index];
   }
