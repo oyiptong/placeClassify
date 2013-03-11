@@ -65,7 +65,6 @@ NaiveBayesClassifier.prototype.classify = function(aTokens) {
         maxValue = currentMax;
         classMatches.push(this._classes[max_index]);
         posteriors[max_index] = -Infinity;
-        break;
       } else if (currentMax/maxValue >= kSimilarityCutOff) {
         max_index = posteriors.indexOf(currentMax);
         classMatches.push(this._classes[max_index]);

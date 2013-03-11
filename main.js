@@ -75,16 +75,6 @@ new lazy(fs.createReadStream(testDataFilename))
     var successRatio = matchCount/Object.keys(categorySet).length;
     gSuccessCount += successRatio;
     gErrorCount += 1-successRatio;
-    /*
-    if (categories != null && categories.length > 1) {
-      if (successRatio > 0 && successRatio < 1) {
-      console.log("url: " + data[0] + " title:\"" + data[1]);
-      console.log("categories: " + categories);
-      console.log("expected: " + Object.keys(categorySet));
-      console.log("sucessRatio: " + successRatio.toFixed(2));
-      }
-    }
-    */
 
     if (gDocumentCount%100000 == 0) {
       printProgress();
