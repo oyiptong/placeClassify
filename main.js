@@ -47,9 +47,10 @@ new lazy(fs.createReadStream(testDataFilename))
     var data = line.toString().split('\t');
 
     var categorySet = {};
-    data[2].split(/[,\s]/).forEach(function(category){
-      categorySet[category] = true;
-    }, this);
+    var givenCategories = data[2].split(/[,\s]/)
+    for(var catIndex=0; catIndex < givenCategories.length; catIndex++) {
+      categorySet[givenCategories[catIndex]] = true;
+    }
 
     if (Object.keys(categorySet).length > 1) {
       gDataMultiClassDoc += 1;
@@ -65,11 +66,11 @@ new lazy(fs.createReadStream(testDataFilename))
       if (categories.length > 1) {
         gObservedMultiClassDoc += 1;
       }
-      categories.forEach(function(category) {
-        if (categorySet.hasOwnProperty(category)) {
+      for(var catIndex=0; catIndex < categories.length; catIndex++) {
+        if (categorySet.hasOwnProperty(categories[catIndex])) {
           matchCount += 1;
         }
-      });
+      }
     }
     // if at least one category is right, this will be 1
     var successRatio = matchCount/Object.keys(categorySet).length;

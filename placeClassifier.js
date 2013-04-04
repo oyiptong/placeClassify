@@ -1,6 +1,6 @@
 const kNotWordPattern = /[^a-z0-9 ]+/g;
 const kMinimumMatchTokens = 3;
-const kSimilarityCutOff = 0.95;
+const kSimilarityCutOff = Math.log(0.95);
 
 function PlaceTokenizer(aUrlStopwordSet) {
   this._urlStopwordSet = aUrlStopwordSet;
@@ -13,11 +13,12 @@ PlaceTokenizer.prototype.tokenize = function(aUrl, aTitle) {
   tokens = [];
 
   urlTokens = aUrl.split(/\s+/);
-  urlTokens.forEach(function(token){
+  for (var tokenIndex=0; tokenIndex < urlTokens.length; tokenIndex++) {
+    var token = urlTokens[tokenIndex];
     if (!(this._urlStopwordSet.hasOwnProperty(token))) {
       tokens.push(token);
     }
-  }, this);
+  }
 
   tokens = tokens.concat(aTitle.split(/\s+/));
 
@@ -26,8 +27,9 @@ PlaceTokenizer.prototype.tokenize = function(aUrl, aTitle) {
 
 function NaiveBayesClassifier(aModel) {
   this._classes = aModel.classes;
-  this._likelihoods = aModel.likelihoods;
-  this._priors = aModel.priors;
+
+  this._logLikelihoods = aModel.logLikelihoods;
+  this._logPriors = aModel.logPriors;
 }
 
 NaiveBayesClassifier.prototype.classify = function(aTokens) {
@@ -36,22 +38,21 @@ NaiveBayesClassifier.prototype.classify = function(aTokens) {
   }
 
   var posteriors = [];
-  this._priors.forEach(function(){
-    posteriors.push(0);
-  }, this);
+
+  for (var index=0; index < this._logPriors.length; index++) {
+    posteriors.push(this._logPriors[index]);
+  }
 
   var tokenMatchCount = 0;
-  aTokens.forEach(function(token){
-    if (this._likelihoods.hasOwnProperty(token)) {
+  for (var tokenIndex=0; tokenIndex < aTokens.length; tokenIndex++) {
+    var token = aTokens[tokenIndex];
+    if (this._logLikelihoods.hasOwnProperty(token)) {
       tokenMatchCount += 1;
-      posteriors.forEach(function(value, index) {
-        if (posteriors[index] == 0) {
-          posteriors[index] = this._priors[index];
-        }
-        posteriors[index] *= this._likelihoods[token][index];
-      }, this);
+      for (var index=0; index < posteriors.length; index++) {
+        posteriors[index] += this._logLikelihoods[token][index];
+      }
     }
-  }, this); 
+  }
 
   var classMatches = [];
   if (tokenMatchCount > kMinimumMatchTokens) {
@@ -65,7 +66,7 @@ NaiveBayesClassifier.prototype.classify = function(aTokens) {
         maxValue = currentMax;
         classMatches.push(this._classes[max_index]);
         posteriors[max_index] = -Infinity;
-      } else if (currentMax/maxValue >= kSimilarityCutOff) {
+      } else if ((currentMax-maxValue) >= kSimilarityCutOff) {
         max_index = posteriors.indexOf(currentMax);
         classMatches.push(this._classes[max_index]);
         posteriors[max_index] = -Infinity;
